@@ -32,9 +32,12 @@ namespace IngameScript
     public class CustomDataStorage
     {
         private readonly Dictionary<string, string> configuration = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        private readonly IMyTerminalBlock Me;
 
-        public CustomDataStorage()
+        public CustomDataStorage(IMyTerminalBlock me)
         {
+            
+            Me = me;
             string[] lines = (Me.CustomData ?? string.Empty).Replace("\r", string.Empty).Split('\n');
             configuration.Clear();
             for (int i = 0; i < lines.Length; i++)
@@ -58,7 +61,6 @@ namespace IngameScript
         private string EditDataValue(string customData, string key, string value)
         {
             string[] lines = customData.Split('\n');
-            bool useCarriageReturn = customData.IndexOf("\r\n", StringComparison.Ordinal) >= 0;
             var result = new StringBuilder();
             bool found = false;
 
@@ -88,7 +90,7 @@ namespace IngameScript
             if (!found)
             {
                 if (result.Length > 0 && result[result.Length - 1] != '\n')
-                    result.Append(useCarriageReturn ? "\r\n" : "\n");
+                    result.Append("\n");
                 result.Append(key).Append('=').Append(value);
             }
 
@@ -107,16 +109,61 @@ namespace IngameScript
 
         public string Get(string key, string defaultValue = "", bool setIfNotFound = false)
         {
-            if (configuration.TryGetValue(key, out string value))
+            string value;
+            if (configuration.TryGetValue(key, out value))
+            {
                 return value;
+            }
             if (setIfNotFound)
                 configuration[key] = defaultValue;
             return defaultValue;
         }
 
-        public void Set(string key, string value)
+        public int Get(string key, int defaultValue = 0, bool setIfNotFound = false)
         {
-            configuration[key] = value;
+            string value;
+            if (configuration.TryGetValue(key, out value))
+            {
+                int result;
+                if (int.TryParse(value, out result))
+                    return result;
+            }
+            if (setIfNotFound)
+                configuration[key] = defaultValue.ToString();
+            return defaultValue;
+        }
+
+        public bool Get(string key, bool defaultValue = false, bool setIfNotFound = false)
+        {
+            string value;
+            if (configuration.TryGetValue(key, out value))
+            {
+                bool result;
+                if (bool.TryParse(value, out result))
+                    return result;
+            }
+            if (setIfNotFound)
+                configuration[key] = defaultValue.ToString();
+            return defaultValue;
+        }
+
+        public long Get(string key, long defaultValue = 0, bool setIfNotFound = false)
+        {
+            string value;
+            if (configuration.TryGetValue(key, out value))
+            {
+                long result;
+                if (long.TryParse(value, out result))
+                    return result;
+            }
+            if (setIfNotFound)
+                configuration[key] = defaultValue.ToString();
+            return defaultValue;
+        }
+
+        public void Set<T>(string key, T value)
+        {
+            configuration[key] = value.ToString();
         }
     }
 }

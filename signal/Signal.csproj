@@ -18,7 +18,7 @@
     </PackageReference>
     <PackageReference Include="Mal.Mdk2.References" Version="2.2.9">
       <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <IncludeAssets>build</IncludeAssets>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -26,4 +26,5 @@
     <AdditionalFiles Include="Instructions.readme" />
     <AdditionalFiles Include="thumb.png" />
   </ItemGroup>
+  <Import Project="../Shared/Shared.projitems" Label="Shared" />
 </Project>

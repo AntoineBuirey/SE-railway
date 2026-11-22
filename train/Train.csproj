@@ -18,7 +18,7 @@
     </PackageReference>
     <PackageReference Include="Mal.Mdk2.References" Version="2.2.9">
       <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <IncludeAssets>Build</IncludeAssets>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
