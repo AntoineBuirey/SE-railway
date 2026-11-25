@@ -1,0 +1,27 @@
+Wagon door controller
+=====================
+
+Setup
+-----
+- Orient this programmable block with its Forward axis toward the wagon's
+  chosen front and its Right axis toward the wagon's right side.
+- Add [DOOR_LEFT] to the Custom Name of every door on the wagon's local left
+  side, and [DOOR_RIGHT] to every door on its local right side. These sides are
+  defined while looking toward the programmable block's Forward direction.
+- Tagged doors must be on the same grid as this programmable block. A door with
+  both tags is ignored.
+
+The wagon listens for locomotive commands over IGC on the connected-constructs
+range; no train ID configuration is needed. It compares its own
+programmable-block orientation with the locomotive's direction and swaps the
+door sides when the wagon is facing backward. If the orientation is ambiguous,
+it closes tagged doors instead of guessing.
+
+Tagged door blocks are enabled while moving to their commanded state, then
+disabled once fully open or closed. Players cannot operate disabled doors.
+
+This direction comparison works when each wagon's heading is within 60 degrees
+of the locomotive's heading (or its opposite when reversed). A wagon more than
+90 degrees around a tight curve can be mistaken for a reversed wagon; a long
+consist spread around a loop may need a neighbor-to-neighbor orientation
+protocol instead.

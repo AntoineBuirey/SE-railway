@@ -1,0 +1,35 @@
+Locomotive door controller
+==========================
+
+Setup
+-----
+- Orient this programmable block with its Forward axis pointing toward the
+  locomotive's normal forward direction and its Right axis toward the right
+  side of the locomotive.
+
+Run commands
+------------
+- forward
+- backward
+- open left
+- open right
+- open both
+- close
+- close left
+- close right
+- close both
+- switch left
+- switch right
+- switch both
+
+Left and right are relative to the selected direction of travel. Opening one
+side closes the other. The script broadcasts its saved state once when it
+starts, then sends one message for each valid command. Commands are broadcast
+on the connected-constructs range; no train ID configuration is needed. Avoid
+having multiple locomotives controlling the same connected construct at once.
+Other locomotive scripts on the same connected construct listen to these
+messages and synchronize their door-side state without changing their own
+selected direction or rebroadcasting received commands. If a receiving
+locomotive faces the opposite way, it swaps the received left/right state into
+its own direction-relative state. Orient each programmable block toward its
+locomotive's normal forward direction.
