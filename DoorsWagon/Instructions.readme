@@ -3,6 +3,7 @@ Wagon door controller
 
 Setup
 -----
+- Deploy this script on every locomotive and car in the train.
 - Orient this programmable block with its Forward axis toward the wagon's
   chosen front and its Right axis toward the wagon's right side.
 - Add [DOOR_LEFT] to the Custom Name of every door on the wagon's local left
@@ -10,18 +11,62 @@ Setup
   defined while looking toward the programmable block's Forward direction.
 - Tagged doors must be on the same grid as this programmable block. A door with
   both tags is ignored.
+- Add (train coupler) to the Custom Name of each modded train connector.
+- Add (train light) to the Custom Name of the four train lights on each car:
+  two on each end.
+- Add exactly one of (side 1) or (side 2) to every tagged light and connector.
+  Use the same side tag for the lights and connectors at the same end of a car;
+  side 1 and side 2 may be assigned arbitrarily on each car.
+- Do not put both side tags on one block. Lights without exactly one side tag
+  remain off; a locomotive needs tagged blocks on both ends to declare a
+  direction.
+- Place the programmable block so its Forward axis points toward the chosen
+  front of its car.
 
-The wagon listens for locomotive commands over IGC on the connected-constructs
-range; no train ID configuration is needed. It compares its own
-programmable-block orientation with the locomotive's direction and swaps the
-door sides when the wagon is facing backward. If the orientation is ambiguous,
-it closes tagged doors instead of guessing.
+Locomotive and door commands
+----------------------------
+Run door commands on a programmable block in the train. Run the `principale`
+and `inactive` commands only on the locomotive's programmable block:
+- forward / backward
+- open left / right / both
+- close left / right / both
+- switch left / right / both
+- principale sens 1 / principal sens 1
+- principale sens 2 / principal sens 2
+- inactive
+
+The active locomotive's Forward axis defines sense 1; sense 2 is the opposite.
+The script maps that direction to the correct side tag on the locomotive, then
+relays it through the tagged couplers. A new active declaration replaces the
+previous one. The active locomotive can clear its state with inactive; running
+inactive on another car does not clear the current active locomotive.
+Direction and door commands travel over connected (train coupler) blocks, so
+no train ID configuration is needed.
+Running forward or backward on the active locomotive changes its declared
+direction to sense 1 or sense 2.
+After coupling or uncoupling cars, run the active declaration again to
+redistribute the train direction.
+
+Headlights
+----------
+The side tag identifies each light's end; the active direction propagated
+through the couplers determines whether that end is front or rear. A coupled
+train connector turns off the lights with the same side tag. At an open end,
+the front lights are white with a 50 m radius and the rear lights are red with
+a 1 m radius. If no locomotive is active, both open ends show red lights. The
+side mapping is relayed car to car, so it follows the consist through curves
+and loops.
+
+Tagged doors and lights must be on the same grid as this programmable block.
+Tagged train couplers must also be on this grid. The door controller compares
+the car's orientation with the command direction and swaps door sides when the
+car is facing backward. If the orientation is ambiguous, it closes tagged
+doors instead of guessing.
 
 Tagged door blocks are enabled while moving to their commanded state, then
 disabled once fully open or closed. Players cannot operate disabled doors.
 
-This direction comparison works when each wagon's heading is within 60 degrees
-of the locomotive's heading (or its opposite when reversed). A wagon more than
-90 degrees around a tight curve can be mistaken for a reversed wagon; a long
-consist spread around a loop may need a neighbor-to-neighbor orientation
-protocol instead.
+This orientation limitation applies to door-side selection: it works when each
+car's heading is within 60 degrees of the command's heading (or its opposite
+when reversed). Headlight direction is propagated neighbor-to-neighbor through
+the couplers and does not use this global heading comparison.
